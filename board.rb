@@ -11,35 +11,12 @@ class GameBoard < RenderObject
     
 		@tile_size = 30
 		@padding = 4
-
-
-		@placer = PiecePlacer.new(window, 500,400)
-		
-
 	  
 	  super(window, @offset_x, @offset_y)
 	end
 	
 	def update
-	  if mouse_on?
-	    bx = board_x(window.mouse_x)
-	    by = board_y(window.mouse_y)
-	    rx = real_x(bx)
-	    ry = real_y(by)
-	    
-	    piece = at? bx, by	
-	    #	def initialize(window, symbol, x, y, defeats, loses_to, moves)
-	    if piece.nil? && @window.button_down?(Gosu::MsLeft) && @placer.left?(@placer.chosen)
-	      #Piece.new(@window, @placer.chosen, rx, ry
-	      set Piece.new(@window, @placer.chosen, rx, ry), bx, by
-	      @placer.remove
-	    elsif !piece.nil? && @window.button_down?(Gosu::MsRight) 
-	      @placer.add piece.symbol
-	      remove bx, by
-	    end
-    end
-	  
-	  @placer.update
+
 	end
 
 	def draw
@@ -51,7 +28,6 @@ class GameBoard < RenderObject
 			  @default_font.draw("-", real_x(x), real_y(y), 0)
 		  end
 		end
-		@placer.draw
 	end
 
 	def real_x x

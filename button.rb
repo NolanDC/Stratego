@@ -18,7 +18,17 @@ class Button < Rectangle
 	def mouse_over?
 		return within? window.mouse_x, window.mouse_y
 	end
-
+	
+	def down? btn = :left
+	  return false if !mouse_over?
+    case btn
+      when :left
+        return true if @window.button_down(Gosu::MsLeft)
+      when :right
+        return true if @window.button_down(Gosu::MsRight)
+    end
+    return false
+  end
 end
 
 

@@ -12,18 +12,42 @@ $pieces = %w{2 3 4 5 6 7 8 9 10 s b f}
 
 
 class GameWindow < Gosu::Window
+  GAME_PHASES=[:setup, :play]
+  
 	def initialize
 		super(800, 600, false)
 		self.caption = "Gosu Tutorial Game"
 		@board = GameBoard.new self
+		@piece_placer = PiecePlacer.new(self, 500,400)
 		
 		@mouse = Rectangle.new(self, 1, 1, 3, 3)
 		@mouse.color = Gosu::Color::RED
 
 		@exit = Button.new(Rectangle.new(self, 0, 0, 400, 400))
+		@phase = GAME_PHASES.first #setup
 	end
 
 	def update
+	
+	  if @board.mouse_on?
+	    bx = @board.board_x(self.mouse_x)
+	    by = @board.board_y(self.mouse_y)
+	    rx = @board.real_x(bx)
+	    ry = @board.real_y(by)
+	    
+	    piece = @board.at? bx, by	
+	    #	def initialize(window, symbol, x, y, defeats, loses_to, moves)
+	    if piece.nil? && self.button_down?(Gosu::MsLeft) && @piece_placer.left?(@piece_placer.chosen)
+	      #Piece.new(@window, @placer.chosen, rx, ry
+	      @board.set Piece.new(self, @piece_placer.chosen, rx, ry), bx, by
+	      @piece_placer.remove
+	    elsif !piece.nil? && self.button_down?(Gosu::MsRight) 
+	      @piece_placer.add piece.symbol
+	      @board.remove bx, by
+	    end
+    end
+	  
+	  @piece_placer.update	
 	  @board.update
 	end
 
@@ -31,7 +55,11 @@ class GameWindow < Gosu::Window
 		@mouse.x = self.mouse_x
 		@mouse.y = self.mouse_y
 		@board.draw
-		@mouse.draw		
+		@mouse.draw	
+		
+	  if @phase == :setup
+  		@piece_placer.draw		
+		end
 	end
 end
 

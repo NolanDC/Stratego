@@ -76,4 +76,12 @@ class PiecePlacer < RenderObject
 	  return @pieces.keys.any? {|x| left? x}
 	end
 	
+	def done?
+	  left_count = 0
+	  @pieces.each_key do |key|
+	    left_count += @pieces[key]
+	  end
+    return (left_count == 0 && @done.down?) ? true : false
+	end
+	
 end
