@@ -29,7 +29,7 @@ class PiecePlacer < RenderObject
 	
 	def update
 	  @buttons.each do |b|
-	    if @window.button_down?(Gosu::MsLeft) && b.mouse_over?
+	    if b.down?
 	      @current_button = b
 	    end
 	  end

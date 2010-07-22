@@ -24,7 +24,7 @@ class GameWindow < Gosu::Window
 		@mouse.color = Gosu::Color::RED
 
 		@exit = Button.new(Rectangle.new(self, 0, 0, 400, 400))
-		@phase = GAME_PHASES.first #setup
+		@phase = :setup
 	end
 
 	def update
@@ -46,8 +46,18 @@ class GameWindow < Gosu::Window
 	      @board.remove bx, by
 	    end
     end
+    
+    if @piece_placer.done?
+      set_phase :play
+    end
 	  
-	  @piece_placer.update	
+	  case @phase
+	    when :setup
+	      @piece_placer.update		    
+	    when :play
+	    
+	  end
+
 	  @board.update
 	end
 
@@ -57,9 +67,16 @@ class GameWindow < Gosu::Window
 		@board.draw
 		@mouse.draw	
 		
-	  if @phase == :setup
-  		@piece_placer.draw		
-		end
+	  case @phase
+	    when :setup
+	      @piece_placer.draw		    
+	    when :play
+	    
+	  end
+	end
+	
+	def set_phase phase
+	  @phase = phase
 	end
 end
 
