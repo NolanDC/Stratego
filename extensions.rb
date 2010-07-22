@@ -8,4 +8,11 @@ class Array
 	end
 end
 
+class Gosu::Window
+#		@window.draw_quad(@x, @y, @color, @x+@width, @y, @color,	@x+@width, @y+@height, @color, @x, @y+@height, @color)
+  def draw_rect x, y, width, height, color = Gosu::Color::WHITE
+    self.draw_quad(x, y, color, x+width, y, color, x+width, y+height, color, x, y+height, color)
+  end
+end
+
 
