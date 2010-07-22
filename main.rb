@@ -17,7 +17,7 @@ class GameWindow < Gosu::Window
 	def initialize
 		super(800, 600, false)
 		self.caption = "Gosu Tutorial Game"
-		@board = GameBoard.new self
+		@board = GameBoard.new self, 10, 4
 		@piece_placer = PiecePlacer.new(self, 500,400)
 		
 		@mouse = Rectangle.new(self, 1, 1, 3, 3)

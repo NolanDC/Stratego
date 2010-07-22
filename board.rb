@@ -3,11 +3,13 @@ class GameBoard < RenderObject
 	attr_accessor :board
 	LENGTH = 10
 
-	def initialize window
-		@board = Array.new(10) { Array.new(10) }
+	def initialize window, width = 10, height = 10
+		@board = Array.new(height) { Array.new(width) }
 		
 		@offset_x = 100
 		@offset_y = 100
+    @height = height
+    @width = width
     
 		@tile_size = 30
 		@padding = 4
@@ -67,7 +69,7 @@ class GameBoard < RenderObject
 	end
 
 	def at? x,  y
-	  return nil if !(0..9).include?(x) || !(0..9).include?(y)
+	  return nil if !(0..@width-1).include?(x) || !(0..@height-1).include?(y)
 		return @board[y][x]		
 	end
 	
