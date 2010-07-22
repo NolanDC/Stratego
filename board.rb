@@ -33,6 +33,9 @@ class GameBoard < RenderObject
 	      #Piece.new(@window, @placer.chosen, rx, ry
 	      set Piece.new(@window, @placer.chosen, rx, ry), bx, by
 	      @placer.remove
+	    elsif !piece.nil? && @window.button_down?(Gosu::MsRight) 
+	      @placer.add piece.symbol
+	      remove bx, by
 	    end
     end
 	  
@@ -94,6 +97,10 @@ class GameBoard < RenderObject
 	
 	def set object, x, y
 	  @board[y][x] = object
+	end
+	
+	def remove x, y
+	  @board[y][x] = nil
 	end
 
 	def mouse_on?

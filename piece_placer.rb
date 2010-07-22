@@ -1,11 +1,9 @@
 
 
 class PiecePlacer < RenderObject
-  attr_accessor :chosen
 	def initialize window, x, y
 		@pieces = Hash.new
 		@pieces.merge!(Stratego::PIECE_COUNT)
-		@chosen = :scout
 		@background_rectangle = Rectangle.new(window, x, y, 200, 100)
 		super(window, x, y)
 		
@@ -15,16 +13,24 @@ class PiecePlacer < RenderObject
 		index = 0
 		@pieces.each_pair do |key, value|
       text = "#{Stratego.short key}: #{value}"		
-      @buttons << Button.new(Rectangle.new(window, @x+4+((index%5)*40), @y+(20*(index/5).ceil)+4, 40, 20), text, key)
+      b = Button.new(Rectangle.new(window, @x+4+((index%5)*40), @y+(20*(index/5).ceil)+4, 40, 20), text, key)
+      if key == :scout
+        @current_button = b
+      end
+      @buttons << b
       index+=1      
     end
 
 	end
 	
+	def chosen
+	  return @current_button.meta
+	end
+	
 	def update
 	  @buttons.each do |b|
 	    if @window.button_down?(Gosu::MsLeft) && b.mouse_over?
-	      @chosen = b.meta
+	      @current_button = b
 	    end
 	  end
 	end
@@ -39,25 +45,25 @@ class PiecePlacer < RenderObject
 		  b.draw
 	  end
 		  
-	  @default_font.draw("Chosen: #{@chosen.to_s.capitalize}", @x+88, @y+48, 0)
+	  @default_font.draw("Chosen: #{chosen.to_s.capitalize}", @x+88, @y+48, 0)
 		
 	end
 	
 	#	def initialize(window, symbol, x, y, defeats, loses_to, moves)
 	def remove
-	  @pieces[@chosen] -= 1
-	  update_buttons
+	  @pieces[chosen] -= 1
+	  update_buttons chosen
 	end
 	
 	def add sym
 	  @pieces[sym] += 1
-	  update_buttons
+	  update_buttons sym
 	end
 	
-	def update_buttons #total hack, wow
+	def update_buttons sym #total hack, wow
 	  @buttons.each do |b|
-	    if b.meta == @chosen
-	      b.text = "#{Stratego.short @chosen}: #{@pieces[@chosen]}"
+	    if b.meta == sym
+	      b.text = "#{Stratego.short b.meta}: #{@pieces[b.meta]}"
       end
     end
   end	
