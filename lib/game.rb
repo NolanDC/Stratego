@@ -12,42 +12,67 @@ class Game
 		@exit = Button.new(Rectangle.new(window, 0, 0, 400, 400))
 		@phase = :setup 
 		
-		@players = [HumanPlayer.new, ComputerPlayer.new]
+		@players = [HumanPlayer.new, RandomComputerPlayer.new]
 		@current_player = @players.first
   end
   
   def update
-	
-	  if @board.mouse_on?
-	    bx = @board.board_x(mouse_x())
-	    by = @board.board_y(mouse_y())
-	    rx = @board.real_x(bx)
-	    ry = @board.real_y(by)
-	    
-	    piece = @board.at? bx, by	
-	    #	def initialize(window, symbol, x, y, defeats, loses_to, moves)
-	    if piece.nil? && self.button_down?(Gosu::MsLeft) && @piece_placer.left?(@piece_placer.chosen)
-	      #Piece.new(@window, @placer.chosen, rx, ry
-	      @board.set Piece.new(@window, @piece_placer.chosen, rx, ry), bx, by
-	      @piece_placer.remove
-	    elsif !piece.nil? && self.button_down?(Gosu::MsRight) 
-	      @piece_placer.add piece.symbol
-	      @board.remove bx, by
-	    end
-    end
-    
-    if @piece_placer.done?
-      set_phase :play
-    end
+
+    bx = @board.board_x(mouse_x())
+    by = @board.board_y(mouse_y())
+    rx = @board.real_x(bx)
+    ry = @board.real_y(by)	
 	  
 	  case @phase
 	    when :setup
-	      @piece_placer.update		    
+	    
+	      if @board.mouse_on?
+	        piece = @board.at? bx, by	
+	        #	def initialize(window, symbol, x, y, defeats, loses_to, moves)
+	        if piece.nil? && self.button_down?(Gosu::MsLeft) && @piece_placer.left?(@piece_placer.chosen)
+	          #Piece.new(@window, @placer.chosen, rx, ry
+	          @board.set Piece.new(@window, @current_player, @piece_placer.chosen, rx, ry), bx, by
+	          @piece_placer.remove
+	        elsif !piece.nil? && self.button_down?(Gosu::MsRight) 
+	          @piece_placer.add piece.symbol
+	          @board.remove bx, by
+	        end	        
+        end	 
+        
+        if piece.nil? && self.button_down?(Gosu::MsRight)
+          place_random
+        end    
+        
+        if @piece_placer.done? || self.button_down?(Gosu::KbSpace)
+          switch_phase(:play)
+        end        
+        
+	      @piece_placer.update             		    
 	    when :play
 	    
 	  end
 
 	  @board.update
+	  
+	  #########################################
+	  #  DEBUGGING 
+	  #########################################
+	  if self.button_down?(Gosu::KbY)
+	    puts @board
+	  end
+	  
+	  
+  end
+  
+  def place_random
+    return if @piece_placer.done?
+    
+    place = @board.remaining_places.first
+    return if place.nil?
+    p = Piece.new(@window, @current_player, @piece_placer.chosen, 
+                  @board.real_x(place[0]), @board.real_y(place[1]))
+    @piece_placer.remove    
+    @board.set p, place[0], place[1]   
   end
   
   def draw
@@ -62,11 +87,7 @@ class Game
 	    when :play
 	    
 	  end
-  end
-  
-	def set_phase phase
-	  @phase = phase
-	end      
+  end   
   
   
   def mouse_x
@@ -79,6 +100,26 @@ class Game
   
   def button_down? btn
     return @window.button_down? btn
+  end
+  
+  def switch_phase(phase)
+    @phase = phase
+    case phase
+      when :play
+        comp_board = @players.last.starting_board( GameBoard.small_board( @window ) )
+        #temporary so I don't have to fill in a new one each time!
+        if @piece_placer.done?
+          player_board = @board
+        else
+          player_board = @players.last.starting_board( GameBoard.small_board( @window ))
+          player_board.each_item do |x|
+            x.player = @players.first
+          end
+        end
+        @board = GameBoard.combine( @window, comp_board, player_board )
+      when :setup
+      
+    end
   end
   
 end

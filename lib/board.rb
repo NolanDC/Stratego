@@ -1,7 +1,6 @@
 
 class GameBoard < RenderObject
 	attr_accessor :board
-	LENGTH = 10
 
 
 	def initialize window, width = 10, height = 10
@@ -34,6 +33,20 @@ class GameBoard < RenderObject
 		  end
 		end
 	end
+	
+	
+	def self.combine window, top, bottom
+	  b = GameBoard.new(window, 10, 10)
+    empty = [Array.new(10), Array.new(10)]
+    b.board = top.board.reverse + empty + bottom.board
+    b.update_positions
+    return b
+	end
+	
+	def self.small_board window
+	  return GameBoard.new(window, 10, 4)
+	end
+	
 
 	def real_x x
 		return @offset_x + x*(@tile_size+@padding)
@@ -102,22 +115,49 @@ class GameBoard < RenderObject
 			return true
 		end
 		return false
-
 	end
 
 
 	def width
-		return (@tile_size+@padding)*LENGTH
+		return (@tile_size+@padding)*@width
 	end
 
 
 	def height
-		return (@tile_size+@padding)*LENGTH
+		return (@tile_size+@padding)*@height
 	end
 
 
 	def mouse_at?
 		return false	
+	end
+	
+	def remaining_places
+	  remaining = []
+	  each_index do |x, y|
+	    if !at? x, y
+	      remaining << [x, y]
+      end
+    end
+    return remaining
+	end
+	
+	def to_s
+	  puts "-"* 30
+	  @board.each do |line|
+	    line.each do |piece|
+	      print piece.to_s + "  "
+      end
+      puts "";
+	  end
+	  puts "-"*30
+	end
+	
+	def update_positions
+	  each_index do |x, y|
+	    piece = at?(x, y)
+	    piece.set_position(real_x(x), real_y(y)) if piece
+	  end
 	end
 	
 end

@@ -2,6 +2,7 @@ require 'rubygems'
 require 'gosu'
 require 'game'
 require '../helpers/extensions'
+require '../helpers/count_hash'
 require 'render_object'
 require 'board'
 require 'piece_placer'
@@ -12,6 +13,7 @@ require 'button'
 require 'player'
 $pieces = %w{2 3 4 5 6 7 8 9 10 s b f}
 
+hide_window= ARGV[0]
 
 class GameWindow < Gosu::Window
   GAME_PHASES=[:setup, :play]
@@ -36,4 +38,4 @@ $game_window = GameWindow.new
 
 
 
-$game_window.show
+$game_window.show if !hide_window
