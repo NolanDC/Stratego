@@ -14,6 +14,8 @@ class Game
 		
 		@players = [HumanPlayer.new, RandomComputerPlayer.new]
 		@current_player = @players.first
+		
+		switch_phase(:play)
   end
   
   def update

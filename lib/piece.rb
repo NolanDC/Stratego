@@ -24,7 +24,8 @@ class Piece < RenderObject
 	end
 	
 	def draw
-	  @default_font.draw(Stratego.short(@symbol), @x, @y, 0)
+		@window.draw_rect(x, y, 45, 45, Gosu::Color.new(100,100,100,200))
+	  @default_font.draw(Stratego.short(@symbol), @x+2, @y+2, 0)
 	end
 
   def to_s

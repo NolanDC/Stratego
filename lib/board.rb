@@ -6,12 +6,12 @@ class GameBoard < RenderObject
 	def initialize window, width = 10, height = 10
 		@board = Array.new(height) { Array.new(width) }
 		
-		@offset_x = 100
-		@offset_y = 100
+		@offset_x = 40
+		@offset_y = 40
     @height = height
     @width = width
     
-		@tile_size = 30
+		@tile_size = 45
 		@padding = 4
 	  
 	  super(window, @offset_x, @offset_y)
@@ -26,9 +26,12 @@ class GameBoard < RenderObject
 	def draw
 		each_index do |x, y|
 			piece = at? x, y
+			rx = real_x(x)
+			ry = real_y(y)
 			if piece
 			  piece.draw
 			else
+			  @window.draw_rect(rx, ry, @tile_size, @tile_size, Gosu::Color.new(255,100,100,100))
 			  @default_font.draw("-", real_x(x), real_y(y), 0)
 		  end
 		end
