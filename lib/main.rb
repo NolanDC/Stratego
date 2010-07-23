@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'gosu'
 require 'game'
-require 'extensions'
+require '../helpers/extensions'
 require 'render_object'
 require 'board'
 require 'piece_placer'
@@ -9,6 +9,7 @@ require 'rect'
 require 'stratego'
 require 'piece'
 require 'button'
+require 'player'
 $pieces = %w{2 3 4 5 6 7 8 9 10 s b f}
 
 

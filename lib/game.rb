@@ -10,7 +10,10 @@ class Game
 		@mouse.color = Gosu::Color::RED
 
 		@exit = Button.new(Rectangle.new(window, 0, 0, 400, 400))
-		@phase = :setup    
+		@phase = :setup 
+		
+		@players = [HumanPlayer.new, ComputerPlayer.new]
+		@current_player = @players.first
   end
   
   def update

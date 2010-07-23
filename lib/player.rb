@@ -29,7 +29,7 @@ end
 
 
 class ComputerPlayer < Player
-  def intialize name=:computer
+  def initialize name=:computer
     super(name, :human)
   end
 end
