@@ -8,6 +8,16 @@ class Array
 	end
 end
 
+class Hash
+  def random_key
+    keys.random
+  end
+  
+  def random_value
+    self[random_key]
+  end
+end
+
 class Gosu::Window
 #		@window.draw_quad(@x, @y, @color, @x+@width, @y, @color,	@x+@width, @y+@height, @color, @x, @y+@height, @color)
   def draw_rect x, y, width, height, color = Gosu::Color::WHITE
