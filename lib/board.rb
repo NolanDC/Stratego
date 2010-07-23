@@ -15,6 +15,9 @@ class GameBoard < RenderObject
 		@padding = 4
 	  
 	  super(window, @offset_x, @offset_y)
+	  
+	  @blocked = [ [2, 4], [2, 5], [3, 4], [3, 5] ] #First set of inaccessible spaces
+	  @blocked += [ [6, 4], [6, 5], [7, 4], [7, 5] ]
 	end
 	
 	
@@ -31,8 +34,12 @@ class GameBoard < RenderObject
 			if piece
 			  piece.draw
 			else
-			  @window.draw_rect(rx, ry, @tile_size, @tile_size, Gosu::Color.new(255,100,100,100))
-			  @default_font.draw("-", real_x(x), real_y(y), 0)
+			  if @blocked.include?([x,y])
+			    @window.draw_rect(rx, ry, @tile_size, @tile_size, Gosu::Color::BLACK)
+		    else
+			    @window.draw_rect(rx, ry, @tile_size, @tile_size, Gosu::Color.new(255,100,100,100))
+			    @default_font.draw("-", real_x(x), real_y(y), 0)
+		    end
 		  end
 		end
 	end

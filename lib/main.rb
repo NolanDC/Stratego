@@ -20,7 +20,7 @@ class GameWindow < Gosu::Window
   
 	def initialize
 		super(800, 600, false)
-		self.caption = "Gosu Tutorial Game"
+		self.caption = "Stratego"
 		
 		@game = Game.new self
 	end
