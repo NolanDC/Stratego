@@ -18,6 +18,8 @@ class GameBoard < RenderObject
 	  
 	  @blocked = [ [2, 4], [2, 5], [3, 4], [3, 5] ] #First set of inaccessible spaces
 	  @blocked += [ [6, 4], [6, 5], [7, 4], [7, 5] ]
+	  
+	  @selected_piece = nil
 	end
 	
 	
@@ -31,8 +33,21 @@ class GameBoard < RenderObject
 			piece = at? x, y
 			rx = real_x(x)
 			ry = real_y(y)
+			
+			opts = {}
+			
 			if piece
-			  piece.draw
+			  #if piece == @current_player.selected_piece
+			  #  opts[:selected] = true
+		    #end
+		    if piece.mouse_over?
+		      opts[:mouse_over] = true
+	      end
+	      
+	      if piece == @selected_piece
+	        opts[:selected] = true
+        end
+			  piece.draw opts
 			else
 			  if @blocked.include?([x,y])
 			    @window.draw_rect(rx, ry, @tile_size, @tile_size, Gosu::Color::BLACK)
@@ -117,7 +132,7 @@ class GameBoard < RenderObject
 	end
 
 
-	def mouse_on?
+	def mouse_over?
 		mx = @window.mouse_x
 		my = @window.mouse_y
 		if mx > @offset_x && my > @offset_y &&
@@ -170,4 +185,7 @@ class GameBoard < RenderObject
 	  end
 	end
 	
+	def select_piece piece
+	  @selected_piece = piece
+  end
 end

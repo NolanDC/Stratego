@@ -21,6 +21,7 @@ class Player
 end
 
 class HumanPlayer < Player
+  
   def initialize name=:human
     super(name, :human)
   end

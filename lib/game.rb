@@ -28,7 +28,7 @@ class Game
 	  case @phase
 	    when :setup
 	    
-	      if @board.mouse_on?
+	      if @board.mouse_over?
 	        piece = @board.at? bx, by	
 	        #	def initialize(window, symbol, x, y, defeats, loses_to, moves)
 	        if piece.nil? && self.button_down?(Gosu::MsLeft) && @piece_placer.left?(@piece_placer.chosen)
@@ -51,7 +51,14 @@ class Game
         
 	      @piece_placer.update             		    
 	    when :play
-	    
+	      if @board.mouse_over?
+	        piece = @board.at? bx, by
+	        if self.button_down?(Gosu::MsLeft)
+	          if piece.player == @current_player	      
+              @board.select_piece(piece)
+            end
+          end
+       end
 	  end
 
 	  @board.update
