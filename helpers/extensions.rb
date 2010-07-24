@@ -8,6 +8,20 @@ class Array
 	end
 end
 
+class Integer
+  #Returns all the numbers in between in an array
+  #Example: 9.between_array(6) => [7,8]
+  def between_array num
+    if self == num
+      return [self]
+    elsif self > num
+      return (num+1...self).to_a.reverse
+    else
+      return (self+1...num).to_a
+    end
+  end
+end
+
 class Hash
   def random_key
     keys.random
@@ -15,22 +29,6 @@ class Hash
   
   def random_value
     self[random_key]
-  end
-end
-
-class Gosu::Window
-#		@window.draw_quad(@x, @y, @color, @x+@width, @y, @color,	@x+@width, @y+@height, @color, @x, @y+@height, @color)
-  def draw_rect x, y, width, height, color = Gosu::Color::WHITE
-    self.draw_quad(x, y, color, x+width, y, color, x+width, y+height, color, x, y+height, color)
-  end
-  
-  def mouse_over? x, y, w, h
-    if mouse_x >= x and mouse_x < x+w
-      if mouse_y >= y and mouse_y < y+h
-        return true
-      end
-    end
-    return false
   end
 end
 
