@@ -54,8 +54,16 @@ class Game
 	      if @board.mouse_over?
 	        piece = @board.at? bx, by
 	        if self.button_down?(Gosu::MsLeft)
-	          if piece.player == @current_player	      
-              @board.select_piece(piece)
+	          if piece
+	            if piece.player == @current_player	      
+                @board.select_piece(piece)
+              end
+            else
+              if @board.selected_piece
+                #TODO add logic for checking if the piece can move there
+                #In the board class, obviously
+                @board.move(@board.selected_position, [bx, by])
+              end
             end
           end
        end

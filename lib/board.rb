@@ -1,6 +1,6 @@
 
 class GameBoard < RenderObject
-	attr_accessor :board
+	attr_accessor :board, :selected_piece
 
 
 	def initialize window, width = 10, height = 10
@@ -37,9 +37,6 @@ class GameBoard < RenderObject
 			opts = {}
 			
 			if piece
-			  #if piece == @current_player.selected_piece
-			  #  opts[:selected] = true
-		    #end
 		    if piece.mouse_over?
 		      opts[:mouse_over] = true
 	      end
@@ -57,6 +54,15 @@ class GameBoard < RenderObject
 		    end
 		  end
 		end
+	end
+	
+	#Expects two arrays of positions, i.e. [1,2], [1,3]
+	def move curr, target 
+	  piece = at?(curr.first, curr.last)
+	  piece.x = real_x(target.first)
+	  piece.y = real_y(target.last)
+	  remove(curr.first, curr.last)
+	  set(piece, target.first, target.last)
 	end
 	
 	
@@ -187,5 +193,13 @@ class GameBoard < RenderObject
 	
 	def select_piece piece
 	  @selected_piece = piece
+  end
+  
+  def deselect
+    @selected_piece = nil
+  end
+  
+  def selected_position
+    return [board_x(@selected_piece.x), board_y(@selected_piece.y)]
   end
 end

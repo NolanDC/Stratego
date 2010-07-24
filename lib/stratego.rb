@@ -23,6 +23,10 @@ class Stratego
 	  return SYMBOLS[sym]
 	end
 	
+	def self.can_move? sym
+	  return MOVE_HASH[sym] > 0 ? true : false
+	end
+	
 	LOSE_HASH = {
 	  :scout => [:bomb, :miner, :sergeant, :leut, :captain, :major, :colonel, :general, :marshal],
 	  :miner => [:sergeant, :leut, :captain, :major, :colonel, :general, :marshal],
