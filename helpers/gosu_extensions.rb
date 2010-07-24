@@ -12,3 +12,9 @@ class Gosu::Window
     return false
   end
 end
+
+class Gosu::Color
+  def copy
+    return Gosu::Color.new(alpha, red, green, blue)
+  end
+end

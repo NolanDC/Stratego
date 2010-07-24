@@ -1,3 +1,7 @@
+class HiddenPiece
+
+end
+
 
 
 class Piece < RenderObject
@@ -12,6 +16,10 @@ class Piece < RenderObject
 		@width, @height = width, height
 	end
 
+  def copy
+    return Piece.new(@window, @player, @symbol, @x, @y, @width, @height)
+  end
+
 	def wins? piece
 		sym = piece.symbol
 		return true if @defeats.include? sym
@@ -24,21 +32,35 @@ class Piece < RenderObject
 		return false
 	end
 	
+	def can_move?
+	  return @moves > 0
+  end
+	
 	def same? piece
 	  return (piece.symbol == @symbol) ? true : false
   end
 	
 	def draw opts = {}
-	  alpha = 255
+	  
+	  color = @player.color.copy
+	  
 	  if opts[:selected]
-	    alpha -= 100
+	    color.alpha -= 100
     end
     
     if opts[:mouse_over]
-      alpha -= 50
+      color.alpha -= 50
     end
-		@window.draw_rect(@x, @y, @width, @height, Gosu::Color.new(alpha,100,100,100))
-	  @default_font.draw(Stratego.short(@symbol), @x+2, @y+2, 0)
+    
+    if opts[:hidden]
+	    @window.draw_rect(@x, @y, @width, @height, color)
+	    @default_font.draw(Stratego.short(@symbol), @x+2, @y+2, 0)	  
+	  else
+	  	@window.draw_rect(@x, @y, @width, @height, color)
+	    @default_font.draw(Stratego.short(@symbol), @x+2, @y+2, 0)		  
+	  end
+	
+
 	end
 
   def to_s

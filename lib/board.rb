@@ -1,4 +1,3 @@
-
 class GameBoard < RenderObject
 	attr_accessor :board, :selected_piece, :tile_size
 
@@ -48,6 +47,10 @@ class GameBoard < RenderObject
 	      if piece == @selected_piece
 	        opts[:selected] = true
         end
+        
+        if piece.player != @current_player
+          opts[:hidden] = true
+        end
 			  piece.draw opts
 			else
 			  if @blocked.include?([x,y])
@@ -60,7 +63,7 @@ class GameBoard < RenderObject
 		end
 	end
 	
-	
+	#expects a piece and an array; i.e. can_move?(a_piece, [3,4])
 	def can_move? piece, target
 	  return false if piece.nil?
 	  cx, cy = board_x(piece.x), board_y(piece.y)
@@ -114,13 +117,7 @@ class GameBoard < RenderObject
 	  piece.x = real_x(bx)
 	  piece.y = real_y(by)
 	  set(piece, bx, by)
-	end
-	
-	
-	def hidden_board player
-	
-	end
-	
+	end	
 	
 	def self.combine window, top, bottom
 	  b = GameBoard.new(window, 10, 10)
@@ -179,8 +176,15 @@ class GameBoard < RenderObject
 	end
 
 
+  def free? x, y
+    return false if @blocked.include([x,y]) || at?(x,y)
+    return true
+  end
+  
+
 	def at? x,  y
 	  return nil if !(0..@width-1).include?(x) || !(0..@height-1).include?(y)
+	  return nil if @blocked.include?([x,y])
 		return @board[y][x]		
 	end
 	
@@ -265,4 +269,47 @@ class GameBoard < RenderObject
   def selected_position
     return [board_x(@selected_piece.x), board_y(@selected_piece.y)]
   end
+  
+  def possible_moves piece
+    bx = board_x(piece.x)
+    by = board_y(piece.y)
+    return [ [bx+1, by], [bx-1, by], [bx, by+1], [bx, by-1] ].select do |pos|
+      free?(x, y)
+    end
+  end
+  
+  def locked? piece #True if a piece is locked in
+    return possible_moves(piece).size == 0
+  end
 end
+
+
+class HiddenBoard < GameBoard
+  def initialize board, player
+    super(board.window, board.width, board.height)
+    @player = player
+    @board.each_index do |x, y|
+      piece = at?(x,y)
+      if piece
+        if piece.player == player
+          set(HiddenPiece.new, x, y)
+        else
+          set(piece.copy, x, y)
+        end
+      end
+    end
+  end
+  
+  def free_pieces
+    free = []
+    each_item do |item|
+      if item.class == Piece
+        if !locked?(item)
+          free << item
+        end
+      end
+    end 
+    return free
+  end
+end
+

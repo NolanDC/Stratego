@@ -1,13 +1,11 @@
 
 
 class Player
-  def initialize name, owner
+  attr_accessor :color
+  
+  def initialize name, owner, color = Gosu::Color.new(255,200,30,30)
     @owner = owner
-  end
-  
-  
-  def move 
-  
+    @color = color
   end
   
   
@@ -23,7 +21,7 @@ end
 class HumanPlayer < Player
   
   def initialize name=:human
-    super(name, :human)
+    super(name, :human, Gosu::Color.new(255,30,30,200))
   end
   
 end
@@ -31,6 +29,9 @@ end
 class ComputerPlayer < Player
   def initialize name=:computer
     super(name, :human)
+  end
+  
+  def move board
   end
   
   def starting_board board
@@ -52,5 +53,14 @@ class RandomComputerPlayer < ComputerPlayer
     end
 
     return board
+  end
+  
+  #TODO What's proper, e.g. or i.e.??? 
+  #returns a set of coordinates e.g. [1,2], [2,2]
+  def move board
+    free_pieces = board.free_pieces
+    piece = free_pieces.random
+    moves = board.possible_moves(piece)
+    return [piece.x, piece.y], moves.random     
   end
 end
