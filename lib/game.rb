@@ -6,20 +6,20 @@ class Game
 		@board = GameBoard.new window, 10, 4
 		@piece_placer = PiecePlacer.new(window, 500,400)
 		
-		@mouse = Rectangle.new(window, 1, 1, 3, 3)
-		@mouse.color = Gosu::Color::RED
+		@mouse_pointer = Rectangle.new(window, 1, 1, 3, 3)
+		@mouse_pointer.color = Gosu::Color::RED
 
 		@exit = Button.new(Rectangle.new(window, 0, 0, 400, 400))
 		@phase = :setup 
 		
 		@players = [HumanPlayer.new, RandomComputerPlayer.new]
 		@current_player = @players.first
-		
+		@mouse = Mouse.new(window)
 		switch_phase(:play)
   end
   
   def update
-
+    
     bx = @board.board_x(mouse_x())
     by = @board.board_y(mouse_y())
     rx = @board.real_x(bx)
@@ -31,17 +31,17 @@ class Game
 	      if @board.mouse_over?
 	        piece = @board.at? bx, by	
 	        #	def initialize(window, symbol, x, y, defeats, loses_to, moves)
-	        if piece.nil? && self.button_down?(Gosu::MsLeft) && @piece_placer.left?(@piece_placer.chosen)
+	        if piece.nil? && @mouse.down?(:left) && @piece_placer.left?(@piece_placer.chosen)
 	          #Piece.new(@window, @placer.chosen, rx, ry
 	          @board.set Piece.new(@window, @current_player, @piece_placer.chosen, rx, ry), bx, by
 	          @piece_placer.remove
-	        elsif !piece.nil? && self.button_down?(Gosu::MsRight) 
+	        elsif !piece.nil? && @mouse.down?(:right)
 	          @piece_placer.add piece.symbol
 	          @board.remove bx, by
 	        end	        
         end	 
         
-        if piece.nil? && self.button_down?(Gosu::MsRight)
+        if piece.nil? && @mouse.down?(:right)
           place_random
         end    
         
@@ -53,7 +53,7 @@ class Game
 	    when :play
 	      if @board.mouse_over?
 	        piece = @board.at? bx, by
-	        if self.button_down?(Gosu::MsLeft)
+	        if @mouse.hit?(:left)
 	          if piece
 	            if piece.player == @current_player	      
                 @board.select_piece(piece)
@@ -62,13 +62,17 @@ class Game
               if @board.selected_piece
                 #TODO add logic for checking if the piece can move there
                 #In the board class, obviously
-                @board.move(@board.selected_position, [bx, by])
+                if @board.can_move?(@board.selected_position, [bx,by])
+                  @board.move(@board.selected_position, [bx, by])
+                  @board.deselect
+                end
               end
             end
           end
        end
 	  end
-
+    
+    @mouse.update
 	  @board.update
 	  
 	  #########################################
@@ -93,10 +97,10 @@ class Game
   end
   
   def draw
-		@mouse.x = self.mouse_x
-		@mouse.y = self.mouse_y
+		@mouse_pointer.x = self.mouse_x
+		@mouse_pointer.y = self.mouse_y
 		@board.draw
-		@mouse.draw	
+		@mouse_pointer.draw	
 		
 	  case @phase
 	    when :setup

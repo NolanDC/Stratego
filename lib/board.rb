@@ -56,6 +56,15 @@ class GameBoard < RenderObject
 		end
 	end
 	
+	def can_move? curr, target
+	  return false if @blocked.include? target
+	  
+	  cx, cy = curr.first, curr.last
+	  tx, ty = target.first, target.last
+	  
+	  
+	end
+	
 	#Expects two arrays of positions, i.e. [1,2], [1,3]
 	def move curr, target 
 	  piece = at?(curr.first, curr.last)

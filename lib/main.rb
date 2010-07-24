@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'gosu'
 require 'game'
+require 'mouse'
 require '../helpers/extensions'
 require '../helpers/count_hash'
 require 'render_object'
