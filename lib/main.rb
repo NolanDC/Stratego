@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'gosu'
+require '../helpers/gosu_extensions'
 require 'game'
 require 'mouse'
 require '../helpers/extensions'

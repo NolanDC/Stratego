@@ -47,7 +47,7 @@ class RandomComputerPlayer < ComputerPlayer
       rx = board.real_x(s[0])
       ry = board.real_y(s[1])
       p = pieces.get( pieces.random_key )
-      new_piece = Piece.new( board.window, self, p, rx, ry )
+      new_piece = Piece.new( board.window, self, p, rx, ry, board.tile_size, board.tile_size)
       board.set new_piece, s[0], s[1]
     end
 

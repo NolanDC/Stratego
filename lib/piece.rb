@@ -1,7 +1,7 @@
 
 
 class Piece < RenderObject
-	attr_accessor :symbol, :player
+	attr_accessor :symbol, :player, :moves
 	def initialize(window, player, symbol, x, y, width =45, height=45)
 	  @player = player
 		@symbol = symbol
@@ -12,14 +12,14 @@ class Piece < RenderObject
 		@width, @height = width, height
 	end
 
-	def wins? sym
-		sym = sym.symbol
+	def wins? piece
+		sym = piece.symbol
 		return true if @defeats.include? sym
 		return false
 	end
 
-	def loses? sym
-		sym = sym.symbol
+	def loses? piece
+		sym = piece.symbol
 		return true if @loses_to.include? sym
 		return false
 	end

@@ -54,15 +54,13 @@ class Game
 	      if @board.mouse_over?
 	        piece = @board.at? bx, by
 	        if @mouse.hit?(:left)
-	          if piece
-	            if piece.player == @current_player	      
-                @board.select_piece(piece)
-              end
+            if piece && piece.player == @current_player	      
+              @board.select_piece(piece)
             else
               if @board.selected_piece
                 #TODO add logic for checking if the piece can move there
                 #In the board class, obviously
-                if @board.can_move?(@board.selected_position, [bx,by])
+                if @board.can_move?(@board.selected_piece, [bx,by])
                   @board.move(@board.selected_position, [bx, by])
                   @board.deselect
                 end
@@ -91,7 +89,7 @@ class Game
     place = @board.remaining_places.first
     return if place.nil?
     p = Piece.new(@window, @current_player, @piece_placer.chosen, 
-                  @board.real_x(place[0]), @board.real_y(place[1]))
+                  @board.real_x(place[0]), @board.real_y(place[1]), @board.tile_size, @board.tile_size)
     @piece_placer.remove    
     @board.set p, place[0], place[1]   
   end

@@ -1,18 +1,22 @@
 
 class GameBoard < RenderObject
-	attr_accessor :board, :selected_piece
+	attr_accessor :board, :selected_piece, :tile_size
 
 
-	def initialize window, width = 10, height = 10
+	def initialize window, width = 10, height = 10, tile_size = 40
 		@board = Array.new(height) { Array.new(width) }
 		
-		@offset_x = 40
-		@offset_y = 40
+		
+
     @height = height
     @width = width
     
-		@tile_size = 45
+		@tile_size = tile_size
 		@padding = 4
+		
+		@offset_y = (window.height - self.height)/2		
+		@offset_x = @offset_y
+
 	  
 	  super(window, @offset_x, @offset_y)
 	  
@@ -50,19 +54,35 @@ class GameBoard < RenderObject
 			    @window.draw_rect(rx, ry, @tile_size, @tile_size, Gosu::Color::BLACK)
 		    else
 			    @window.draw_rect(rx, ry, @tile_size, @tile_size, Gosu::Color.new(255,100,100,100))
-			    @default_font.draw("-", real_x(x), real_y(y), 0)
+			    #@default_font.draw("-", real_x(x), real_y(y), 0)
 		    end
 		  end
 		end
 	end
 	
-	def can_move? curr, target
-	  return false if @blocked.include? target
-	  
-	  cx, cy = curr.first, curr.last
+	def can_move? piece, target
+	  return false if piece.nil?
+	  cx, cy = board_x(piece.x), board_y(piece.y)
 	  tx, ty = target.first, target.last
+	  	
+	  return false if @blocked.include? target #Cannot move into the center blocked squares
+	  return false if piece.moves == 0 #Either a bomb or a target	  
+	  return false if ((cx-tx).abs + (cy-ty).abs) > piece.moves #Out of the pieces range	  
+	  return false if !(cx == tx) && !(cy == ty) #The move must be in a straight line
+	  [cx, tx].each {|x| return false if !(0..@width).include?(x) } #safety precautions for AI
+	  [cy, ty].each {|y| return false if !(0..@height).include?(y) } #ditto
 	  
+	  if at?(tx, ty)
+	    return false if at?(tx, ty).player == piece.player #Can't move onto your own player
+	  end
 	  
+	  cx.between_array(tx).each do |x|
+	    cy.between_array(ty).each do |y|
+	      return false if !at?(x, y).nil? || @blocked.include?([x, y])
+	    end
+    end
+	  
+	  return true 
 	end
 	
 	#Expects two arrays of positions, i.e. [1,2], [1,3]
