@@ -24,6 +24,10 @@ class Piece < RenderObject
 		return false
 	end
 	
+	def same? piece
+	  return (piece.symbol == @symbol) ? true : false
+  end
+	
 	def draw opts = {}
 	  alpha = 255
 	  if opts[:selected]

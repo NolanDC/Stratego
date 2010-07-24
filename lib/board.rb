@@ -60,6 +60,7 @@ class GameBoard < RenderObject
 		end
 	end
 	
+	
 	def can_move? piece, target
 	  return false if piece.nil?
 	  cx, cy = board_x(piece.x), board_y(piece.y)
@@ -85,13 +86,39 @@ class GameBoard < RenderObject
 	  return true 
 	end
 	
+	
 	#Expects two arrays of positions, i.e. [1,2], [1,3]
 	def move curr, target 
 	  piece = at?(curr.first, curr.last)
-	  piece.x = real_x(target.first)
-	  piece.y = real_y(target.last)
-	  remove(curr.first, curr.last)
-	  set(piece, target.first, target.last)
+	  enemy = at?(target.first,target.last)
+	  
+	  if enemy
+	    if piece.same?(enemy)
+	      remove(target.first, target.last)
+	      remove(curr.first,curr.last)
+	    elsif piece.wins?(enemy) #Piece wins against enemy!
+	      remove(target.first, target.last)
+	      remove(curr.first, curr.last)
+	      place(piece, target.first, target.last)
+      else #Piece loses.. 
+        remove(curr.first, curr.last)
+      end
+	  else #No enemy, just move the player
+	   place(piece, target.first, target.last)
+	   remove(curr.first, curr.last)
+    end
+	end
+	
+	
+	def place piece, bx, by #Places a piece at a place, with proper coordinates, etc..
+	  piece.x = real_x(bx)
+	  piece.y = real_y(by)
+	  set(piece, bx, by)
+	end
+	
+	
+	def hidden_board player
+	
 	end
 	
 	
@@ -102,6 +129,7 @@ class GameBoard < RenderObject
     b.update_positions
     return b
 	end
+	
 	
 	def self.small_board window
 	  return GameBoard.new(window, 10, 4)
@@ -192,6 +220,7 @@ class GameBoard < RenderObject
 		return false	
 	end
 	
+	
 	def remaining_places
 	  remaining = []
 	  each_index do |x, y|
@@ -201,6 +230,7 @@ class GameBoard < RenderObject
     end
     return remaining
 	end
+	
 	
 	def to_s
 	  puts "-"* 30
@@ -213,6 +243,7 @@ class GameBoard < RenderObject
 	  puts "-"*30
 	end
 	
+	
 	def update_positions
 	  each_index do |x, y|
 	    piece = at?(x, y)
@@ -220,13 +251,16 @@ class GameBoard < RenderObject
 	  end
 	end
 	
+	
 	def select_piece piece
 	  @selected_piece = piece
   end
   
+  
   def deselect
     @selected_piece = nil
   end
+  
   
   def selected_position
     return [board_x(@selected_piece.x), board_y(@selected_piece.y)]
