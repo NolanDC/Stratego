@@ -1,7 +1,7 @@
 
 
 class RenderObject
-	attr_accessor :x, :y, :window, :color
+	attr_accessor :x, :y, :window, :color, :width, :height
   
   def initialize window, x, y, color = Gosu::Color::WHITE
     @color = color

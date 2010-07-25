@@ -13,7 +13,7 @@ class GameBoard < RenderObject
 		@tile_size = tile_size
 		@padding = 4
 		
-		@offset_y = (window.height - self.height)/2		
+		@offset_y = (window.height - self.real_height)/2		
 		@offset_x = @offset_y
 
 	  
@@ -34,12 +34,12 @@ class GameBoard < RenderObject
 	def draw
 		each_index do |x, y|
 			piece = at? x, y
-			rx = real_x(x)
-			ry = real_y(y)
-			
+		  rx = real_x(x)
+		  ry = real_y(y)
 			opts = {}
 			
 			if piece
+
 		    if piece.mouse_over?
 		      opts[:mouse_over] = true
 	      end
@@ -66,15 +66,15 @@ class GameBoard < RenderObject
 	#expects a piece and an array; i.e. can_move?(a_piece, [3,4])
 	def can_move? piece, target
 	  return false if piece.nil?
-	  cx, cy = board_x(piece.x), board_y(piece.y)
+	  cx, cy = piece.x, piece.y
 	  tx, ty = target.first, target.last
 	  	
 	  return false if @blocked.include? target #Cannot move into the center blocked squares
 	  return false if piece.moves == 0 #Either a bomb or a target	  
 	  return false if ((cx-tx).abs + (cy-ty).abs) > piece.moves #Out of the pieces range	  
 	  return false if !(cx == tx) && !(cy == ty) #The move must be in a straight line
-	  [cx, tx].each {|x| return false if !(0..@width).include?(x) } #safety precautions for AI
-	  [cy, ty].each {|y| return false if !(0..@height).include?(y) } #ditto
+	  [cx, tx].each {|x| return false if !(0...@width).include?(x) } #safety precautions for AI
+	  [cy, ty].each {|y| return false if !(0...@height).include?(y) } #ditto
 	  
 	  if at?(tx, ty)
 	    return false if at?(tx, ty).player == piece.player #Can't move onto your own player
@@ -114,8 +114,7 @@ class GameBoard < RenderObject
 	
 	
 	def place piece, bx, by #Places a piece at a place, with proper coordinates, etc..
-	  piece.x = real_x(bx)
-	  piece.y = real_y(by)
+	  piece.x, piece.y = bx, by
 	  set(piece, bx, by)
 	end	
 	
@@ -203,19 +202,19 @@ class GameBoard < RenderObject
 		mx = @window.mouse_x
 		my = @window.mouse_y
 		if mx > @offset_x && my > @offset_y &&
-			mx < @offset_x + width && my < @offset_y + height
+			mx < @offset_x + real_width && my < @offset_y + real_height
 			return true
 		end
 		return false
 	end
 
 
-	def width
+	def real_width
 		return (@tile_size+@padding)*@width
 	end
 
 
-	def height
+	def real_height
 		return (@tile_size+@padding)*@height
 	end
 
@@ -240,7 +239,11 @@ class GameBoard < RenderObject
 	  puts "-"* 30
 	  @board.each do |line|
 	    line.each do |piece|
-	      print piece.to_s + "  "
+	      if piece && piece.class == Piece 
+	        print piece.to_s + "  "
+        else
+          print "   "
+        end
       end
       puts "";
 	  end
@@ -249,9 +252,12 @@ class GameBoard < RenderObject
 	
 	
 	def update_positions
+	  each_item do |p|
+	    p.board = self if p
+    end
 	  each_index do |x, y|
 	    piece = at?(x, y)
-	    piece.set_position(real_x(x), real_y(y)) if piece
+	    piece.set_position(x, y) if piece
 	  end
 	end
 	
@@ -267,14 +273,16 @@ class GameBoard < RenderObject
   
   
   def selected_position
-    return [board_x(@selected_piece.x), board_y(@selected_piece.y)]
+    return [@selected_piece.x, @selected_piece.y]
   end
+
   
   def possible_moves piece
-    bx = board_x(piece.x)
-    by = board_y(piece.y)
+    bx = piece.x
+    by = piece.y
     return [ [bx+1, by], [bx-1, by], [bx, by+1], [bx, by-1] ].select do |pos|
-      free?(x, y)
+      can_move?(piece, pos)
+      #free?(pos.first, pos.last) || (at?(pos.first, pos.last) != nil && at?(post.first,post.last).player != piece.player)
     end
   end
   
@@ -283,18 +291,20 @@ class GameBoard < RenderObject
   end
 end
 
-
+#Hidden board uses non-real coordinates, using the array ones instead
 class HiddenBoard < GameBoard
   def initialize board, player
     super(board.window, board.width, board.height)
     @player = player
-    @board.each_index do |x, y|
-      piece = at?(x,y)
+    board.each_index do |x, y|
+      piece = board.at?(x,y)
       if piece
-        if piece.player == player
+        if piece.player != player
           set(HiddenPiece.new, x, y)
         else
-          set(piece.copy, x, y)
+          p = piece.copy
+
+          set(p, x, y)
         end
       end
     end

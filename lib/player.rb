@@ -1,7 +1,7 @@
 
 
 class Player
-  attr_accessor :color
+  attr_accessor :color, :owner
   
   def initialize name, owner, color = Gosu::Color.new(255,200,30,30)
     @owner = owner
@@ -28,7 +28,7 @@ end
 
 class ComputerPlayer < Player
   def initialize name=:computer
-    super(name, :human)
+    super(name, :computer)
   end
   
   def move board
@@ -45,10 +45,8 @@ class RandomComputerPlayer < ComputerPlayer
     spots = board.remaining_places
     #used spots so both didn't start with a p ;-)
     spots.each do |s|
-      rx = board.real_x(s[0])
-      ry = board.real_y(s[1])
       p = pieces.get( pieces.random_key )
-      new_piece = Piece.new( board.window, self, p, rx, ry, board.tile_size, board.tile_size)
+      new_piece = Piece.new( board, self, p, s[0], s[1], board.tile_size, board.tile_size)
       board.set new_piece, s[0], s[1]
     end
 

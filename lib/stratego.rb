@@ -52,7 +52,7 @@ class Stratego
 	  :colonel => [:flag, :spy, :scout, :miner, :sergeant, :leut, :captain, :major],
 	  :general => [:flag, :spy, :scout, :miner, :sergeant, :leut, :captain, :major, :colonel],
 	  :marshal => [:flag, :spy, :scout, :miner, :sergeant, :leut, :captain, :major, :colonel, :general],
-	  :spy => [:general],
+	  :spy => [:marshal],
 	  :bomb => [:miner],
 	  :flag => PIECE_ARRAY
 	  }	  

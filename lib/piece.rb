@@ -1,23 +1,41 @@
 class HiddenPiece
+  attr_accessor :player
+  def initialize
+    @player = :hidden
+  end
 
+  def to_s
+    return "X"
+  end
 end
 
 
 
 class Piece < RenderObject
-	attr_accessor :symbol, :player, :moves
-	def initialize(window, player, symbol, x, y, width =45, height=45)
+	attr_accessor :symbol, :player, :moves, :board
+	def initialize(board, player, symbol, x, y, width =45, height=45)
 	  @player = player
 		@symbol = symbol
+		@board = board
 		@defeats = Stratego::WIN_HASH[symbol]
 		@loses_to = Stratego::LOSE_HASH[symbol]
 		@moves = Stratego::MOVE_HASH[symbol]
-		super(window, x, y)
+		super(@board.window, x, y)
 		@width, @height = width, height
 	end
+	
+	
+	def real_x
+	  return @board.real_x(@x)
+  end
+  
+  def real_y
+    return @board.real_y(@y)
+  end
+	
 
   def copy
-    return Piece.new(@window, @player, @symbol, @x, @y, @width, @height)
+    return Piece.new(@board, @player, @symbol, @x, @y, @width, @height)
   end
 
 	def wins? piece
@@ -41,7 +59,6 @@ class Piece < RenderObject
   end
 	
 	def draw opts = {}
-	  
 	  color = @player.color.copy
 	  
 	  if opts[:selected]
@@ -53,15 +70,15 @@ class Piece < RenderObject
     end
     
     if opts[:hidden]
-	    @window.draw_rect(@x, @y, @width, @height, color)
-	    @default_font.draw(Stratego.short(@symbol), @x+2, @y+2, 0)	  
+	    @window.draw_rect(real_x, real_y, @width, @height, color)
+	    @default_font.draw(Stratego.short(@symbol), real_x+2, real_y+2, 0)	  
 	  else
-	  	@window.draw_rect(@x, @y, @width, @height, color)
-	    @default_font.draw(Stratego.short(@symbol), @x+2, @y+2, 0)		  
+	  	@window.draw_rect(real_x, real_y, @width, @height, color)
+	    @default_font.draw(Stratego.short(@symbol), real_x+2, real_y+2, 0)		  
 	  end
 	
-
 	end
+	
 
   def to_s
     return Stratego.short @symbol
@@ -72,6 +89,6 @@ class Piece < RenderObject
   end
   
   def mouse_over?
-    @window.mouse_over? @x, @y, @width, @height
+    @window.mouse_over? real_x, real_y, @width, @height
   end
 end
