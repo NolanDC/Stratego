@@ -92,31 +92,27 @@ class GameBoard < RenderObject
 	def move curr, target 
 	  piece = at?(curr.first, curr.last)
 	  enemy = at?(target.first,target.last)
-	  pstr = piece.symbol.to_s.capitalize + "(#{Stratego.short(piece.symbol)})"
+	  
 	  if enemy
-	    estr = enemy.symbol.to_s.capitalize + "(#{Stratego.short(enemy.symbol)})"
 	    if piece.same?(enemy)
 	      remove(target.first, target.last)
 	      remove(curr.first,curr.last)
-	      msg = "#{pstr} and #{estr} killed each other"
+	      move_object = MoveObject.new(:suicide, piece.player, piece, enemy)
 	    elsif piece.wins?(enemy) #Piece wins against enemy!
 	      remove(target.first, target.last)
 	      remove(curr.first, curr.last)
-	      msg = "#{pstr} #{['crushed','demolished','destroyed'].random} #{estr}"
+        move_object = MoveObject.new(:win, piece.player, piece, enemy)
 	      place(piece, target.first, target.last)
-	      if enemy.symbol == :flag
-	        msg = "#{pstr} captures the flag!"
-        end
       else #Piece loses.. 
-        msg = "#{pstr} #{['submitted to','lost to','killed by'].random} #{estr}"
+        move_object = MoveObject.new(:loss, piece.player, piece, enemy)
         remove(curr.first, curr.last)
       end
 	  else #No enemy, just move the player
-	   msg = nil
+	   move_object = MoveObject.new(:move, piece.player, piece)
 	   place(piece, target.first, target.last)
 	   remove(curr.first, curr.last)
     end
-    return msg
+    return move_object
 	end
 	
 	

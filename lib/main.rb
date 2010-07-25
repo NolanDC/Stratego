@@ -14,6 +14,7 @@ require 'piece'
 require 'button'
 require 'player'
 require 'notification'
+require 'move_object'
 $pieces = %w{2 3 4 5 6 7 8 9 10 s b f}
 
 hide_window= ARGV[0]

@@ -18,7 +18,7 @@ class Game
 
 		@notifications = NotificationHandler.new(window, window.width-205, 5, width = 200)
 		
-		switch_phase(:setup)
+		switch_phase(:play)
   end
   
   def update
@@ -53,8 +53,8 @@ class Game
   
   def update_computer
     curr, target = @current_player.move(HiddenBoard.new(@board, @current_player))
-    msg = @board.move curr, target
-    @notifications.add msg if msg
+    move_object = @board.move curr, target
+    notify(move_object)
     @current_player = @players.first
   end
     
@@ -102,8 +102,8 @@ class Game
                 #In the board class, obviously
                 if @board.can_move?(@board.selected_piece, [bx,by])
                   @current_player = @players.last
-                  message = @board.move(@board.selected_position, [bx, by])
-                  @notifications.add(message) if message
+                  move_object = @board.move(@board.selected_position, [bx, by])
+                  notify(move_object)
                   @board.deselect
                 end
               end
@@ -112,6 +112,12 @@ class Game
        end
 	  end  
   end  
+  
+  def notify move_object  
+    return if move_object.type == :move
+    #@notifications.add(move_object.message, move_object.piece.player.color.copy)
+    @notifications.add_move_object(move_object)
+  end
   
   
   def place_random
