@@ -13,7 +13,7 @@ end
 
 class Piece < RenderObject
 	attr_accessor :symbol, :player, :moves, :board
-	def initialize(board, player, symbol, x, y, width =45, height=45)
+	def initialize(board, player, symbol, x, y, width =50, height=50)
 	  @player = player
 		@symbol = symbol
 		@board = board
@@ -71,7 +71,7 @@ class Piece < RenderObject
     
     if opts[:hidden]
 	    @window.draw_rect(real_x, real_y, @width, @height, color)
-	    @default_font.draw(Stratego.short(@symbol), real_x+2, real_y+2, 0)	  
+	    #@default_font.draw(Stratego.short(@symbol), real_x+2, real_y+2, 0)	  
 	  else
 	  	@window.draw_rect(real_x, real_y, @width, @height, color)
 	    @default_font.draw(Stratego.short(@symbol), real_x+2, real_y+2, 0)		  

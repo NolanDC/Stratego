@@ -1,11 +1,9 @@
 class GameBoard < RenderObject
-	attr_accessor :board, :selected_piece, :tile_size
+	attr_accessor :board, :selected_piece, :tile_size, :notifications
 
 
-	def initialize window, width = 10, height = 10, tile_size = 40
+	def initialize window, width = 10, height = 10, tile_size = 50
 		@board = Array.new(height) { Array.new(width) }
-		
-		
 
     @height = height
     @width = width
@@ -27,7 +25,6 @@ class GameBoard < RenderObject
 	
 	
 	def update
-
 	end
 
 
@@ -48,7 +45,7 @@ class GameBoard < RenderObject
 	        opts[:selected] = true
         end
         
-        if piece.player != @current_player
+        if piece.player.owner != :human
           opts[:hidden] = true
         end
 			  piece.draw opts
@@ -91,25 +88,35 @@ class GameBoard < RenderObject
 	
 	
 	#Expects two arrays of positions, i.e. [1,2], [1,3]
+	#Returns the message to be added to the notifications
 	def move curr, target 
 	  piece = at?(curr.first, curr.last)
 	  enemy = at?(target.first,target.last)
-	  
+	  pstr = piece.symbol.to_s.capitalize + "(#{Stratego.short(piece.symbol)})"
 	  if enemy
+	    estr = enemy.symbol.to_s.capitalize + "(#{Stratego.short(enemy.symbol)})"
 	    if piece.same?(enemy)
 	      remove(target.first, target.last)
 	      remove(curr.first,curr.last)
+	      msg = "#{pstr} and #{estr} killed each other"
 	    elsif piece.wins?(enemy) #Piece wins against enemy!
 	      remove(target.first, target.last)
 	      remove(curr.first, curr.last)
+	      msg = "#{pstr} #{['crushed','demolished','destroyed'].random} #{estr}"
 	      place(piece, target.first, target.last)
+	      if enemy.symbol == :flag
+	        msg = "#{pstr} captures the flag!"
+        end
       else #Piece loses.. 
+        msg = "#{pstr} #{['submitted to','lost to','killed by'].random} #{estr}"
         remove(curr.first, curr.last)
       end
 	  else #No enemy, just move the player
+	   msg = nil
 	   place(piece, target.first, target.last)
 	   remove(curr.first, curr.last)
     end
+    return msg
 	end
 	
 	

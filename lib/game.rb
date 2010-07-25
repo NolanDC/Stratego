@@ -15,12 +15,20 @@ class Game
 		@players = [HumanPlayer.new, RandomComputerPlayer.new]
 		@current_player = @players.first
 		@mouse = Mouse.new(window)
-		switch_phase(:play)
+
+		@notifications = NotificationHandler.new(window, window.width-205, 5, width = 200)
+		
+		switch_phase(:setup)
   end
   
   def update
     
-
+    case @phase
+      when :setup
+        
+      when :play
+        @notifications.update
+    end
 	  
     case @current_player.owner
       when :human
@@ -45,8 +53,8 @@ class Game
   
   def update_computer
     curr, target = @current_player.move(HiddenBoard.new(@board, @current_player))
-    puts "#{curr} : #{target}"
-    @board.move curr, target
+    msg = @board.move curr, target
+    @notifications.add msg if msg
     @current_player = @players.first
   end
     
@@ -73,7 +81,7 @@ class Game
         end	 
         
         if piece.nil? && @mouse.down?(:right)
-          place_random
+          #place_random
         end    
         
         if @piece_placer.done? || self.button_down?(Gosu::KbSpace)
@@ -94,7 +102,8 @@ class Game
                 #In the board class, obviously
                 if @board.can_move?(@board.selected_piece, [bx,by])
                   @current_player = @players.last
-                  @board.move(@board.selected_position, [bx, by])
+                  message = @board.move(@board.selected_position, [bx, by])
+                  @notifications.add(message) if message
                   @board.deselect
                 end
               end
@@ -126,6 +135,7 @@ class Game
 	    when :setup
 	      @piece_placer.draw		    
 	    when :play
+        @notifications.draw
 	    
 	  end
   end   
