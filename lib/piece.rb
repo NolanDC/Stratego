@@ -13,7 +13,7 @@ end
 
 class Piece < RenderObject
 	attr_accessor :symbol, :player, :moves, :board
-	def initialize(board, player, symbol, x, y, width =50, height=50)
+	def initialize(board, player, symbol, x, y, width, height)
 	  @player = player
 		@symbol = symbol
 		@board = board
@@ -91,4 +91,21 @@ class Piece < RenderObject
   def mouse_over?
     @window.mouse_over? real_x, real_y, @width, @height
   end
+end
+
+
+class NotificationPiece < Piece
+	def initialize(board, player, symbol, x, y, width, height)
+		super(board, player, symbol, x, y, width, height)
+	end
+	
+	def self.from_piece piece
+	  return NotificationPiece.new(piece.board, piece.player, piece.symbol, piece.x, piece.y, piece.width, piece.height)
+	end
+	
+	def draw opts = {}
+	  color = @player.color.copy
+  	@window.draw_rect(opts[:x], opts[:y], @width, @height, color)
+    @default_font.draw(Stratego.short(@symbol), opts[:x]+2, opts[:y]+2, 0)		  
+	end	
 end

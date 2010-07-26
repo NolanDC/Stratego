@@ -2,7 +2,7 @@ class GameBoard < RenderObject
 	attr_accessor :board, :selected_piece, :tile_size, :notifications
 
 
-	def initialize window, width = 10, height = 10, tile_size = 50
+	def initialize window, width = 10, height = 10, tile_size = 40
 		@board = Array.new(height) { Array.new(width) }
 
     @height = height
@@ -34,7 +34,7 @@ class GameBoard < RenderObject
 		  rx = real_x(x)
 		  ry = real_y(y)
 			opts = {}
-			
+			    @window.draw_rect(rx, ry, @tile_size, @tile_size, Gosu::Color.new(255,100,100,100))			
 			if piece
 
 		    if piece.mouse_over?
@@ -53,7 +53,7 @@ class GameBoard < RenderObject
 			  if @blocked.include?([x,y])
 			    @window.draw_rect(rx, ry, @tile_size, @tile_size, Gosu::Color::BLACK)
 		    else
-			    @window.draw_rect(rx, ry, @tile_size, @tile_size, Gosu::Color.new(255,100,100,100))
+
 			    #@default_font.draw("-", real_x(x), real_y(y), 0)
 		    end
 		  end

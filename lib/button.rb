@@ -23,9 +23,9 @@ class Button < Rectangle
 	  return false if !mouse_over?
     case btn
       when :left
-        return true if @window.button_down?(Gosu::MsLeft)
+        return true if @window.mouse.hit?(:left)#@window.button_down?(Gosu::MsLeft)
       when :right
-        return true if @window.button_down?(Gosu::MsRight)
+        return true if @window.mouse.hit?(:right)#@window.button_down?(Gosu::MsRight)
     end
     return false
   end

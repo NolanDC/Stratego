@@ -6,7 +6,9 @@ class MoveObject
   
   def initialize type, player, piece, enemy = nil
     @type = type
-    @piece, @enemy = piece, enemy
+    @piece = NotificationPiece.from_piece(piece)
+
+    @enemy = NotificationPiece.from_piece(enemy) if enemy
     @player = player
   end
   
@@ -29,11 +31,41 @@ class MoveObject
     end
   end
   
+  def winning_piece
+    if @type == :loss
+      return @enemy
+    elsif @type == :win
+      return @piece
+    else
+      return nil
+    end
+  end
+  
+  def losing_piece
+    if @type == :loss
+      return @piece
+    elsif @type == :win
+      return @enemy
+    else
+      return nil
+    end
+  end
+  
   def winning_player
     if @type == :loss
       return @enemy.player
     elsif @type == :win
       return @piece.player
+    else
+      return nil
+    end
+  end
+  
+  def losing_player
+    if @type == :loss
+      return @piece.player
+    elsif @type == :win
+      return @enemy.player
     else
       return nil
     end

@@ -14,10 +14,11 @@ class Game
 		
 		@players = [HumanPlayer.new, RandomComputerPlayer.new]
 		@current_player = @players.first
-		@mouse = Mouse.new(window)
+		@mouse = window.mouse
 
 		@notifications = NotificationHandler.new(window, window.width-205, 5, width = 200)
 		
+		#switch_phase(:setup)
 		switch_phase(:play)
   end
   
@@ -72,7 +73,7 @@ class Game
 	        #	def initialize(window, symbol, x, y, defeats, loses_to, moves)
 	        if piece.nil? && @mouse.down?(:left) && @piece_placer.left?(@piece_placer.chosen)
 	          #Piece.new(@window, @placer.chosen, rx, ry
-	          @board.set Piece.new(@board, @current_player, @piece_placer.chosen, bx, by), bx, by
+	          @board.set Piece.new(@board, @current_player, @piece_placer.chosen, bx, by, @board.tile_size, @board.tile_size), bx, by
 	          @piece_placer.remove
 	        elsif !piece.nil? && @mouse.down?(:right)
 	          @piece_placer.add piece.symbol
@@ -113,10 +114,15 @@ class Game
 	  end  
   end  
   
+  
   def notify move_object  
     return if move_object.type == :move
+
     #@notifications.add(move_object.message, move_object.piece.player.color.copy)
     @notifications.add_move_object(move_object)
+    if move_object.type == :win && move_object.enemy.symbol == :flag
+      @notifications.add("#{move_object.winning_player.owner} has won the game!")
+    end    
   end
   
   
@@ -132,6 +138,7 @@ class Game
   end
   
   def draw
+  
 		@mouse_pointer.x = self.mouse_x
 		@mouse_pointer.y = self.mouse_y
 		@board.draw
