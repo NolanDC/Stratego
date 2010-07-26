@@ -62,7 +62,7 @@ class Notification < RenderObject
     @color.alpha = 150  
     @window.draw_rect(@x, @y, @width, @height - 5, @color) 
 
-    @default_font.draw(@message, @x+3, @y+3, 0, 1, 1, Gosu::Color::WHITE)
+    @default_font.draw(@message, @x+3, @y+3, 0, 1, 1, Gosu::Color::BLACK)
     @color.alpha = 255
   end
 end
