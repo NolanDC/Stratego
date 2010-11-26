@@ -5,7 +5,7 @@ class Button < Rectangle
 	def initialize rect, text = "default", meta = ""
 	  @meta = meta
 	  @text = text
-		super(rect.window, rect.x, rect.y, rect.width, rect.height)
+		super(rect.window, rect.x, rect.y, rect.width, rect.height, rect.color)
 	end
 
 	def draw
@@ -23,9 +23,9 @@ class Button < Rectangle
 	  return false if !mouse_over?
     case btn
       when :left
-        return true if @window.mouse.hit?(:left)#@window.button_down?(Gosu::MsLeft)
+        return true if @window.mouse.hit?(:left) #@window.button_down?(Gosu::MsLeft)
       when :right
-        return true if @window.mouse.hit?(:right)#@window.button_down?(Gosu::MsRight)
+        return true if @window.mouse.hit?(:right) #@window.button_down?(Gosu::MsRight)
     end
     return false
   end

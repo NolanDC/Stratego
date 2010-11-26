@@ -15,13 +15,15 @@ require 'button'
 require 'player'
 require 'notification'
 require 'move_object'
+require 'frame'
+# one liner, maybe? ['rubygmems', 'gosu', '../helpers/gosu_extensions', 'mouse']
 $pieces = %w{2 3 4 5 6 7 8 9 10 s b f}
 
 hide_window= ARGV[0]
 
 class GameWindow < Gosu::Window
   attr_accessor :mouse
-  GAME_PHASES=[:setup, :play]
+  GAME_PHASES=[:menu, :setup, :play]
   
 	def initialize
 		super(800, 600, false)

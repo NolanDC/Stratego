@@ -12,19 +12,29 @@ class Game
 		@exit = Button.new(Rectangle.new(window, 0, 0, 400, 400))
 		@phase = :setup 
 		
-		@players = [HumanPlayer.new, RandomComputerPlayer.new]
+		@players = [HumanPlayer.new, Beethoven.new]
 		@current_player = @players.first
 		@mouse = window.mouse
 
 		@notifications = NotificationHandler.new(window, window.width-205, 5, width = 200)
 		
-		#switch_phase(:setup)
-		switch_phase(:play)
+		#Frame for the main menu, all code is specific to the singleton class
+		@main_menu = StartingFrame.new window
+		
+#		switch_phase(:setup)
+#		switch_phase(:play)
+		switch_phase(:menu)
   end
+  
   
   def update
     
+    #Phase specific updating
     case @phase
+      when :menu
+        if @main_menu.start_game?
+          switch_phase(:setup)
+        end
       when :setup
         
       when :play
@@ -47,7 +57,6 @@ class Game
 	  if self.button_down?(Gosu::KbY)
 	    puts @board
 	  end
-	  
 	  
   end
    
@@ -141,15 +150,17 @@ class Game
   
 		@mouse_pointer.x = self.mouse_x
 		@mouse_pointer.y = self.mouse_y
-		@board.draw
-		@mouse_pointer.draw	
+		@mouse_pointer.draw
 		
 	  case @phase
+      when :menu
+        @main_menu.draw
 	    when :setup
-	      @piece_placer.draw		    
+	      @piece_placer.draw
+	      @board.draw
 	    when :play
         @notifications.draw
-	    
+	    	@board.draw
 	  end
   end   
   
@@ -175,7 +186,8 @@ class Game
         if @piece_placer.done?
           player_board = @board
         else
-          player_board = @players.last.starting_board( GameBoard.small_board( @window ))
+          player_board = RandomComputerPlayer.new.starting_board( GameBoard.small_board(@window) )
+          #@players.last.starting_board( GameBoard.small_board( @window ) )
           player_board.each_item do |x|
             x.player = @players.first
           end

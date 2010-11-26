@@ -1,12 +1,11 @@
 
 
 class Rectangle < RenderObject
-  attr_accessor :width, :height
+  attr_accessor :width, :height, :color
   
 	def initialize window, x, y, width, height, color = Gosu::Color::WHITE
 		@width, @height = width, height
-		@color = color
-		super(window, x, y)
+		super(window, x, y, color)
 	end
 
 	def draw
